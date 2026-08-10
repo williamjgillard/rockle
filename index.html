@@ -1,5 +1,6 @@
 <title>Rockle — a rock &amp; roll word game</title>
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<script src="words.js"></script>
 <style>
   :root{
     --bg:#15120e;
@@ -386,6 +387,16 @@
     return statuses;
   }
 
+  // valid-guess lookup: system dictionary + rock slang (words.js) union every puzzle
+  // answer, so a guess must be a real word but the day's answer is always guessable
+  // even if words.js fails to load.
+  var VALID_WORDS = (function(){
+    var set = {};
+    (typeof ROCKLE_WORDS !== "undefined" ? ROCKLE_WORDS : []).forEach(function(w){ set[w] = true; });
+    PUZZLES.forEach(function(p){ set[p.word] = true; });
+    return set;
+  })();
+
   var els = {
     puzCategory: document.getElementById("puzCategory"),
     puzNumber: document.getElementById("puzNumber"),
@@ -538,6 +549,11 @@
     var maxGuesses = maxGuessesFor(answer);
     if (currentInput.length !== answer.length){
       showToast("Not enough letters");
+      shakeCurrentRow();
+      return;
+    }
+    if (!VALID_WORDS[currentInput]){
+      showToast("Not a valid word");
       shakeCurrentRow();
       return;
     }
