@@ -440,6 +440,7 @@
   }
 
   function render(){
+    var scrollX = window.scrollX, scrollY = window.scrollY;
     puzzle = puzzleFor(currentNumber);
     state = loadState(currentNumber);
     var answer = puzzle.word;
@@ -501,6 +502,9 @@
       marker.style.display = "none";
       document.body.appendChild(marker);
     }
+
+    window.scrollTo(scrollX, scrollY);
+    requestAnimationFrame(function(){ window.scrollTo(scrollX, scrollY); });
   }
 
   function renderKeyboard(){
