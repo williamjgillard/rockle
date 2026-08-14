@@ -541,14 +541,30 @@
     setTimeout(function(){ row.classList.remove("shake"); }, 340);
   }
 
+  function updateCurrentRow(){
+    // Typing/backspacing only ever changes the tiles in the row currently
+    // being filled in. Update those tiles in place instead of tearing down
+    // and rebuilding the whole board + keyboard (render()) on every
+    // keystroke — that full rebuild was what caused mobile browsers to
+    // reset scroll to the top on each tap.
+    var row = els.board.children[state.guesses.length];
+    if (!row) { render(); return; }
+    var tiles = row.children;
+    for (var i = 0; i < tiles.length; i++){
+      var ch = currentInput[i] || "";
+      tiles[i].textContent = ch;
+      tiles[i].classList.toggle("filled", !!ch);
+    }
+  }
+
   function pressKey(k){
     if (state.over) return;
     var answer = puzzleFor(currentNumber).word;
     if (k === "ENTER"){ submitGuess(); return; }
-    if (k === "⌫"){ currentInput = currentInput.slice(0, -1); render(); return; }
+    if (k === "⌫"){ currentInput = currentInput.slice(0, -1); updateCurrentRow(); return; }
     if (/^[A-Z]$/.test(k) && currentInput.length < answer.length){
       currentInput += k;
-      render();
+      updateCurrentRow();
     }
   }
 
