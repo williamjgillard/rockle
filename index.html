@@ -1,4 +1,17 @@
+<script>
+// Standalone home-screen launches (iOS/Android "Add to Home Screen") can get stuck
+// serving whatever was cached on install day. Force one fresh network fetch per
+// cold launch by reloading with a cache-busting query param.
+(function(){
+  if (!/[?&]v=/.test(location.search)) {
+    location.replace(location.pathname + "?v=" + Date.now() + location.hash);
+  }
+})();
+</script>
 <title>Rockle — a rock &amp; roll word game</title>
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <link rel="manifest" href="manifest.json">
 <meta name="theme-color" content="#15120e">
